@@ -6,6 +6,7 @@ import "./index.css";
 import Root from "./Root.jsx";
 import Login from "./Components/Login/Login.jsx";
 import Home from "./Components/Home/Home.jsx";
+import Register from "./Components/Register/Register.jsx";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
         path: "/login",
         Component: Login,
       },
+      {
+        path: "/register",
+        Component: Register
+      }
     ],
   },
 ]);
