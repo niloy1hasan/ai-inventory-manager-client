@@ -9,6 +9,8 @@ import Home from "./Components/Home/Home.jsx";
 import Register from "./Components/Register/Register.jsx";
 import AuthProvider from "./Context/AuthProvider.jsx";
 import NotFound from "./Components/NotFound/NotFound.jsx";
+import PrivateRoutes from "./Components/Routes/PrivateRoutes.jsx";
+import AddModel from "./Components/AddModel/AddModel.jsx";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +28,12 @@ const router = createBrowserRouter([
       {
         path: "/register",
         Component: Register
+      },{
+        path: '/add-model',
+        element:
+        <PrivateRoutes>
+          <AddModel></AddModel>
+        </PrivateRoutes>
       },
       {
         path: "/*",
