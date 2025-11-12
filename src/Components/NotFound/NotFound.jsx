@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router';
 
 const NotFound = () => {
     return (
@@ -8,13 +9,13 @@ const NotFound = () => {
           <h2 className="mt-6 text-6xl font-extrabold text-gray-900">404</h2>
           <p className="mt-2 text-3xl font-bold text-gray-900">Page not found</p>
           <p className="mt-2 text-sm text-gray-600">
-            Sorry, we couldn't find the model you're looking for. This AI model doesn’t exist.
+            Sorry, we couldn't find the page or model you're looking for. This page doesn’t exist.
           </p>
         </div>
 
         <div className="mt-8">
-          <a
-            href="/"
+          <NavLink
+            to={'/'}
             className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <svg
@@ -31,28 +32,7 @@ const NotFound = () => {
               />
             </svg>
             Go back home
-          </a>
-          {/* If you're using React Router:
-          <Link
-            to="/"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <svg
-              className="mr-2 -ml-1 h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 12h18m-9-9l9 9-9 9"
-              />
-            </svg>
-            Go back home
-          </Link>
-          */}
+          </NavLink>
         </div>
       </div>
     </div>
