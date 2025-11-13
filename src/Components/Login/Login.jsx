@@ -1,35 +1,51 @@
 import { GoogleAuthProvider } from "firebase/auth";
 import { NavLink, useLocation, useNavigate } from "react-router";
 import { AuthContext } from "../../Context/AuthContext.";
-import { use } from "react";
+import { use, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 
 const Login = () => {
-  const {signInUser, googleSignIn} = use(AuthContext);
+  const {signInUser, googleSignIn, addUserOnDb} = use(AuthContext);
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [disabled, setDisabled] = useState(false);
+
 
   const handleLogin = (e) => {
     e.preventDefault();
+    setDisabled(true);
     const email = e.target.userEmail.value;
     const password = e.target.userPassword.value;
+    
 
     signInUser(email, password)
     .then(result => {
       console.log(result);
       e.target.reset();
-      navigate('/');
+      navigate(location.state==='/add-model' ? '/add-model' : '/');
     })
-    .catch(error => console.log(error))
+    .catch(error => {
+      console.log(error);
+      toast.error('Invalid Email and Password');
+    })
 
+    .finally(() => setDisabled(false));
   }
 
   const handleGoogleSignIn = () => {
     googleSignIn()
     .then(result => {
-      console.log(result);
-      navigate('/');
+      const user = result.user;
+      const newUser = {
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+      };
+
+      addUserOnDb(newUser);
+      navigate(location.state==='/add-model' ? '/add-model' : '/');
     })
     .catch(error => {
       console.log(error);
@@ -48,7 +64,6 @@ const Login = () => {
                   details.
                 </p>
 
-                {/* Social Login Buttons */}
                 
                 <div className="flex mb-6 justify-center items-center -mx-2">
                     <button onClick={handleGoogleSignIn} className="btn w-full bg-white py-3 px-4 text-black border-gray-400 hover:border-gray-800 rounded-full border  transition duration-100"><svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g><path d="m0 0H512V512H0" fill="#fff"></path><path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"></path><path fill="#4285f4" d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"></path><path fill="#fbbc02" d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"></path><path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path></g></svg>
@@ -56,7 +71,6 @@ const Login = () => {
                 </button>
                 </div>
 
-                {/* Divider */}
                 <div className="flex mb-6 items-center">
                   <div className="w-full h-px bg-gray-300"></div>
                   <span className="mx-4 text-sm font-semibold text-gray-500">
@@ -65,7 +79,6 @@ const Login = () => {
                   <div className="w-full h-px bg-gray-300"></div>
                 </div>
 
-                {/* Login Form */}
                 <form onSubmit={handleLogin}>
                   <div className="mb-6">
                     <label className="block mb-1.5 text-sm text-gray-900 font-semibold">
@@ -91,13 +104,16 @@ const Login = () => {
                       />
                   </div>
 
-                  <button
-                    className="relative group block w-full mb-6 py-3 px-5 text-center text-sm font-semibold text-orange-50 bg-blue-700 rounded-full overflow-hidden"
+                  <button className="relative group block w-full mb-6 py-3 px-5 text-center text-sm font-semibold text-orange-50 bg-blue-700 rounded-full overflow-hidden"
                     type="submit"
-                  >
-                    <div className="absolute top-0 right-full w-full h-full bg-blue-900 transform group-hover:translate-x-full group-hover:scale-102 transition duration-500"></div>
-                    <span className="relative">Login</span>
-                  </button>
+                    disabled={disabled}>
+
+                  <div className={`${disabled ? 'hidden': ''} absolute top-0 right-full w-full h-full bg-blue-900 transform group-hover:translate-x-full group-hover:scale-102 transition duration-500`}></div>
+
+                  <span className="relative z-10">{disabled? 'Loading...': 'Login'}</span>
+                </button>
+
+
 
                   <span className="text-xs text-center flex justify-center font-semibold text-gray-900">
                     <span>Don’t have an account?</span>
@@ -111,6 +127,7 @@ const Login = () => {
                 </form>
             </div>
           </div>
+          <ToastContainer hideProgressBar></ToastContainer>
     </section>
   );
 };
