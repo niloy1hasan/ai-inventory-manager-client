@@ -25,7 +25,7 @@ const Navbar = () => {
 
       return (
     <>
-      <nav className="bg-base-100 shadow-sm">
+      <nav className="bg-base-100 sticky z-50 top-0 shadow-sm">
         <div className="navbar max-w-[1800px] mx-auto lg:px-10">
         <div className="navbar-start">
           <div className="dropdown">
@@ -61,7 +61,7 @@ const Navbar = () => {
           <ul className="menu menu-horizontal px-1">
             <li><NavLink to={'/'}>Home</NavLink></li>
             <li><NavLink to={'/add-model'}>Add Model</NavLink></li>
-            <li><a>All Models</a></li>
+            <li><NavLink to={'/models'}>All Models</NavLink></li>
             <li><a>My Models</a></li>
             <li><a>Purchased Models</a></li>
           </ul>
@@ -96,7 +96,6 @@ const Navbar = () => {
       <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
         <div className="w-10 rounded-full">
           <img
-            alt={user.displayName}
             src={user.photoURL ? user.photoURL : 'src/assets/default-user.png'} />
         </div>
       </div>
@@ -106,14 +105,13 @@ const Navbar = () => {
           <div className="flex items-center gap-1.5">
              <div className="w-8 h-8">
           <img
-          className="rounded-full"
-            alt={user.displayName}
+          className="rounded-full h-8 w-8"
             src={user.photoURL ? user.photoURL : 'src/assets/default-user.png'} />
         </div> 
 
         <div>
-          <h2 className="font-semibold">{user.displayName}</h2>
-          <p className="text-[12px] text-gray-400">{user.email}</p>
+          <h2 className="font-semibold text-nowrap">{user.displayName}</h2>
+          <p className="text-[12px] text-nowrap text-gray-400">{user.email}</p>
         </div>
           </div>
           <div className="h-px bg-zinc-200 my-2"></div>

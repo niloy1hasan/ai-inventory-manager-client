@@ -9,6 +9,20 @@ const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    const addUserOnDb = (newUser) =>{
+        fetch('http://localhost:3000/users', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+            },
+             body: JSON.stringify(newUser)
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+        })
+    }
+
     const createUser = (email, password) => {
         setLoading(true);
         return createUserWithEmailAndPassword(auth, email, password);
@@ -46,7 +60,8 @@ const AuthProvider = ({children}) => {
         signInUser,
         loading,
         googleSignIn,
-        logoutUser
+        logoutUser,
+        addUserOnDb
     };
 
     return (

@@ -11,6 +11,8 @@ import AuthProvider from "./Context/AuthProvider.jsx";
 import NotFound from "./Components/NotFound/NotFound.jsx";
 import PrivateRoutes from "./Components/Routes/PrivateRoutes.jsx";
 import AddModel from "./Components/AddModel/AddModel.jsx";
+import AllModels from "./Components/AllModels/AllModels.jsx";
+import ModelDetails from "./Components/ModelDetails/ModelDetails.jsx";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +36,15 @@ const router = createBrowserRouter([
         <PrivateRoutes>
           <AddModel></AddModel>
         </PrivateRoutes>
+      },
+      {
+        path: '/models',
+        Component: AllModels,
+        loader: () => fetch('http://localhost:3000/models').then(res => res.json())
+      },
+      {
+        path: '/model-details',
+        Component: ModelDetails
       },
       {
         path: "/*",
