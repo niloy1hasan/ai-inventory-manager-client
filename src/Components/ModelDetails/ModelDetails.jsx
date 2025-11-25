@@ -1,42 +1,83 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState, use, useRef } from "react";
+import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
 import { FaEye, FaStar } from "react-icons/fa";
+import { AuthContext } from "../../Context/AuthContext.";
+import { FaCloudDownloadAlt } from "react-icons/fa";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function ModelDetails() {
-  const { id } = useParams();
-  const [model, setModel] = useState(null);
-  const [currentUser, setCurrentUser] = useState("user@example.com");
-  const [purchased, setPurchased] = useState(0);
+  const model = useLoaderData();
+  const { user } = use(AuthContext);
+  const [purchased, setPurchased] = useState(model?.purchased || 0);
   const [isSticky, setIsSticky] = useState(false);
+  const deleteModal = useRef(null);
+  const navigate = useNavigate();
+  const [isPurchased, setIsPurchased] = useState(false);
+  const [loadingPurchase, setLoadingPurchase] = useState(false);
 
   useEffect(() => {
-    const fakeModel = {
-      _id: id,
-      name: "BERT",
-      framework: "TensorFlow",
-      useCase: "NLP",
-      dataset: "Wikipedia",
-      description:
-        "BERT (Bidirectional Encoder Representations from Transformers) is a transformer-based model designed for understanding the context of words in text. It’s used for NLP tasks such as question answering, sentiment analysis, and text classification.",
-      image: "https://i.ibb.co/6nVv7cP/sample-bert.png",
-      createdBy: "user@example.com",
-      createdAt: "2025-10-28T11:54:00.000Z",
-      purchased: 3,
-      profilePic: "https://i.pravatar.cc/100?img=12",
-      views: 120,
-      rating: 4.7,
-    };
-    setModel(fakeModel);
-    setPurchased(fakeModel.purchased);
-  }, [id]);
+  if (!user?.email || !model?._id) return;
 
-  const handlePurchase = () => setPurchased((prev) => prev + 1);
-  const handleEdit = () => alert("Edit model functionality coming soon!");
-  const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this model?")) {
-      alert("Model deleted successfully!");
+  fetch(`https://ai-inventory-manager-server.vercel.app/my-purchase/${user.email}`)
+    .then(res => res.json())
+    .then(data => {
+      const alreadyBought = data.some(p => p.modelId === model._id);
+      setIsPurchased(alreadyBought);
+    });
+}, [user?.email, model?._id]);
+
+
+
+
+  const handlePurchase = async () => {
+  if (!user?.email) {
+    alert("Please login first");
+    return;
+  }
+
+  setLoadingPurchase(true);
+
+  try {
+    const res = await fetch(`https://ai-inventory-manager-server.vercel.app/purchase/${model._id}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ buyerEmail: user.email }),
+    });
+
+    const data = await res.json();
+
+    if (data.modelId) {
+      setPurchased(prev => prev + 1);
+      setIsPurchased(true);
+      toast.success("Purchased Successfully!");
     }
-  };
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoadingPurchase(false);
+  }
+};
+
+
+  const handleDelete = async() => {
+  try {
+    const res = await fetch(`https://ai-inventory-manager-server.vercel.app/models/${model._id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (data.deletedCount > 0) {
+      console.log('delete');
+    }
+  } catch (err) {
+    console.error(err);
+  }
+  finally{
+    navigate('/models');
+  }
+    
+};
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,15 +92,14 @@ export default function ModelDetails() {
   }, []);
 
   if (!model) return <div className="p-10 text-center">Loading...</div>;
-  const isCreator = currentUser === model.createdBy;
+
+  const isCreator = user?.email === model.createdBy;
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-10">
       <div
         className={`transition-all duration-300 ${
-          isSticky
-            ? "fixed top-16 left-0 right-0 bg-white z-20 py-3"
-            : ""
+          isSticky ? "fixed top-16 left-0 right-0 bg-white z-20 py-3" : ""
         }`}
       >
         <div
@@ -68,50 +108,66 @@ export default function ModelDetails() {
           }`}
         >
           <div className="hidden md:flex items-center gap-3">
-           {!isSticky ? (
-            <><img
-                src={model.profilePic}
-                alt="profile"
-                className="w-10 h-10 rounded-full border" /><div>
-                  <p className="font-semibold text-gray-800">{model.createdBy}</p>
-
+            {!isSticky ? (
+              <>
+                <img
+                  src={model.profilePic || user?.photoURL || "../../assets/default-user.png"}
+                  alt="profile"
+                  className="w-10 h-10 rounded-full border"
+                />
+                <div>
+                  <p className="font-semibold text-gray-800">
+                    {model.createdBy || user?.email || "Unknown"}
+                  </p>
                   <p className="text-xs text-gray-500">
                     {new Date(model.createdAt).toLocaleDateString()}
                   </p>
-                </div></>
-            ): <>
-            <h1 className="text-4xl font-bold mb-2 text-gray-800">
-            {model.name}
-          </h1>
-            </>}
+                </div>
+              </>
+            ) : (
+              <h1 className="text-4xl font-bold mb-2 text-gray-800">
+                {model.name}
+              </h1>
+            )}
           </div>
 
           <div className="flex items-center gap-3 text-sm">
             <div className="flex gap-3">
-              <span className="bg-gray-100 px-3 py-1 rounded-md">
-              💰 {purchased}
-            </span>
-            <span className="bg-gray-100 px-3 py-1 rounded-md flex items-center gap-1">
-              <FaEye /> {model.views}
-            </span>
-            <span className="bg-gray-100 px-3 py-1 rounded-md flex items-center gap-1">
-              <FaStar className="text-yellow-500" /> {model.rating}
-            </span>
+              <span className="bg-gray-100 px-3 py-1 rounded-md flex items-center gap-1">
+                <FaCloudDownloadAlt />
+ {purchased}
+              </span>
+              <span className="bg-gray-100 px-3 py-1 rounded-md flex items-center gap-1">
+                <FaEye /> {model.views || 0}
+              </span>
+              <span className="bg-gray-100 px-3 py-1 rounded-md flex items-center gap-1">
+                <FaStar className="text-yellow-500" /> {model.rating || 0}
+              </span>
             </div>
 
-            <button
-              onClick={handlePurchase}
-              className="btn btn-sm btn-primary text-white"
-            >
-              Purchase
-            </button>
+          {!isCreator &&  (isPurchased ? (
+  <button className="btn btn-sm bg-gray-400 text-white" disabled>
+    Purchased
+  </button>
+) : (
+  <button
+    onClick={handlePurchase}
+    disabled={loadingPurchase}
+    className="btn btn-sm btn-primary text-white"
+  >
+    {loadingPurchase ? "Processing..." : "Purchase"}
+  </button>
+))}
+
 
             {isCreator && (
               <>
-                <button onClick={handleEdit} className="btn btn-sm btn-warning">
-                  Update
+                <NavLink to={`/update-model/${model._id}`}>
+                <button className="btn btn-sm btn-warning">
+                  Edit
                 </button>
-                <button onClick={handleDelete} className="btn btn-sm btn-error">
+                </NavLink>
+                <button onClick={()=> deleteModal.current?.showModal()} className="btn btn-sm btn-error">
                   Delete
                 </button>
               </>
@@ -120,11 +176,13 @@ export default function ModelDetails() {
         </div>
       </div>
 
-      {/* Spacer to prevent layout shift when sticky */}
       {isSticky && <div className="h-20"></div>}
 
       {/* Project Section */}
-      <div id="project-section" className="flex flex-col justify-center md:justify-around md:flex-row gap-10">
+      <div
+        id="project-section"
+        className="flex flex-col justify-center md:justify-around md:flex-row gap-10"
+      >
         <div className="flex flex-col justify-center ">
           <h1 className="text-4xl font-bold mb-2 text-gray-800">
             {model.name}
@@ -136,26 +194,25 @@ export default function ModelDetails() {
         </div>
         <div>
           <img
-            src={model.image}
+            src={model.image || "../../assets/default-user.png"}
             alt={model.name}
             className="w-[200px] rounded-lg object-cover mx-auto border"
           />
         </div>
       </div>
 
+      {/* Details Section */}
       <div className="grid md:grid-cols-[80%_auto] gap-10 mt-8">
         <div>
           <h3 className="text-2xl font-semibold mb-3">Description</h3>
           <p className="text-gray-700 leading-relaxed text-justify">
-            {model.description}
+            {model.description || "No description provided."}
           </p>
         </div>
 
-        {/* Right: Metadata */}
         <div className="space-y-3 p-5">
           <p>
-            <span className="font-semibold">Framework:</span>{" "}
-            {model.framework}
+            <span className="font-semibold">Framework:</span> {model.framework}
           </p>
           <p>
             <span className="font-semibold">Dataset:</span> {model.dataset}
@@ -168,6 +225,19 @@ export default function ModelDetails() {
           </p>
         </div>
       </div>
+<dialog ref={deleteModal} className="modal">
+  <div className="modal-box">
+    <h3 className="font-bold text-lg">Delete Model</h3>
+    <p className="py-4">Do you want to delete this model?</p>
+    <div className="modal-action">
+      <form method="dialog" className="flex gap-2">
+        <button className="btn">Close</button>
+        <button onClick={handleDelete} className="btn text-white bg-red-500 hover:bg-red-700">Delete</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+<ToastContainer hideProgressBar></ToastContainer>
     </div>
   );
 }
