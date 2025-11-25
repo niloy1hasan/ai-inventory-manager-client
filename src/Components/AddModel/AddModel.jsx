@@ -5,7 +5,7 @@ import { AuthContext } from "../../Context/AuthContext.";
 
 const AddModel = () => {
   const { user } = use(AuthContext);
-  console.log(user);
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -18,8 +18,12 @@ const AddModel = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const name = e.target.name;
+  const value = e.target.value;
+
+  setFormData({ ...formData, [name]: value });
+};
+
 
   const isValid = Object.values(formData).every((item) => item.trim() !== "");
 
@@ -43,7 +47,7 @@ const AddModel = () => {
       view: 0,
     };
 
-    fetch("http://localhost:3000/models", {
+    fetch("https://ai-inventory-manager-server.vercel.app/models", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -89,7 +93,6 @@ const AddModel = () => {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 lg:grid-cols-12 gap-8"
         >
-          {/* Description textarea */}
           <div className="lg:col-span-7 order-2 lg:order-1">
             <div className="bg-white border border-[#3366cc]/20 rounded-xl shadow-sm h-full p-6 flex flex-col">
               <label className="text-lg font-semibold mb-3">Description</label>
@@ -109,50 +112,103 @@ const AddModel = () => {
             </div>
           </div>
 
-          {/* Other inputs */}
           <div className="lg:col-span-5 space-y-6 order-1 lg:order-2">
-            {["name", "framework", "useCase", "dataset", "image"].map(
-              (field) => (
-                <div
-                  key={field}
-                  className="bg-white border border-[#3366cc]/20 rounded-xl p-5 shadow-sm"
-                >
-                  <label className="block text-sm font-semibold mb-2 text-neutral-700">
-                    {field === "name"
-                      ? "Model Name"
-                      : field.charAt(0).toUpperCase() + field.slice(1)}
-                  </label>
-                  <input
-                    type={field === "image" ? "url" : "text"}
-                    name={field}
-                    value={formData[field]}
-                    onChange={handleChange}
-                    placeholder={
-                      field === "name"
-                        ? "e.g., BERT"
-                        : field === "framework"
-                        ? "e.g., TensorFlow"
-                        : field === "useCase"
-                        ? "e.g., NLP"
-                        : field === "dataset"
-                        ? "e.g., ImageNet"
-                        : "image url"
-                    }
-                    className="w-full border border-neutral-300 focus:border-[#3366cc] focus:ring-2 focus:ring-[#3366cc]/40 rounded-lg px-3 py-2 outline-none transition"
+
+            <div className="bg-white border border-[#3366cc]/20 rounded-xl p-5 shadow-sm">
+              <label className="block text-sm font-semibold mb-2 text-neutral-700">
+                Model Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="e.g., BERT"
+                className="w-full border border-neutral-300 focus:border-[#3366cc] focus:ring-2 focus:ring-[#3366cc]/40 rounded-lg px-3 py-2 outline-none transition"
+              />
+            </div>
+
+            <div className="bg-white border border-[#3366cc]/20 rounded-xl p-5 shadow-sm">
+              <label className="block text-sm font-semibold mb-2 text-neutral-700">
+                Framework
+              </label>
+
+              <select
+                name="framework"
+                value={formData.framework}
+                onChange={handleChange}
+                className="w-full border border-neutral-300 focus:border-[#3366cc] focus:ring-2 focus:ring-[#3366cc]/40 rounded-lg px-3 py-2 outline-none transition bg-white"
+              >
+                <option value="">Select Framework</option>
+                <option value="TensorFlow">TensorFlow</option>
+                <option value="PyTorch">PyTorch</option>
+                <option value="Keras">Keras</option>
+                <option value="Scikit-learn">Scikit-learn</option>
+                <option value="JAX">JAX</option>
+              </select>
+            </div>
+
+
+            <div className="bg-white border border-[#3366cc]/20 rounded-xl p-5 shadow-sm">
+              <label className="block text-sm font-semibold mb-2 text-neutral-700">
+                UseCase
+              </label>
+              <input
+                type="text"
+                name="useCase"
+                value={formData.useCase}
+                onChange={handleChange}
+                placeholder="e.g., NLP"
+                className="w-full border border-neutral-300 focus:border-[#3366cc] focus:ring-2 focus:ring-[#3366cc]/40 rounded-lg px-3 py-2 outline-none transition"
+              />
+            </div>
+
+            <div className="bg-white border border-[#3366cc]/20 rounded-xl p-5 shadow-sm">
+              <label className="block text-sm font-semibold mb-2 text-neutral-700">
+                Dataset
+              </label>
+
+              <select
+                name="dataset"
+                value={formData.dataset}
+                onChange={handleChange}
+                className="w-full border border-neutral-300 focus:border-[#3366cc] focus:ring-2 focus:ring-[#3366cc]/40 rounded-lg px-3 py-2 outline-none transition bg-white"
+              >
+                <option value="">Select Dataset</option>
+                <option value="ImageNet">ImageNet</option>
+                <option value="COCO">COCO</option>
+                <option value="MNIST">MNIST</option>
+                <option value="CIFAR-10">CIFAR-10</option>
+                <option value="Wikipedia">Wikipedia</option>
+              </select>
+            </div>
+
+
+            <div className="bg-white border border-[#3366cc]/20 rounded-xl p-5 shadow-sm">
+              <label className="block text-sm font-semibold mb-2 text-neutral-700">
+                Image
+              </label>
+              <input
+                type="url"
+                name="image"
+                value={formData.image}
+                onChange={handleChange}
+                placeholder="image url"
+                className="w-full border border-neutral-300 focus:border-[#3366cc] focus:ring-2 focus:ring-[#3366cc]/40 rounded-lg px-3 py-2 outline-none transition"
+              />
+
+              {formData.image && (
+                <div className="mt-4">
+                  <img
+                    src={formData.image}
+                    alt="Model Preview"
+                    className="rounded-lg border border-neutral-200 shadow-sm max-h-56 object-contain mx-auto"
                   />
-                  {field === "image" && formData.image && (
-                    <div className="mt-4">
-                      <img
-                        src={formData.image}
-                        alt="Model Preview"
-                        className="rounded-lg border border-neutral-200 shadow-sm max-h-56 object-contain mx-auto"
-                      />
-                    </div>
-                  )}
                 </div>
-              )
-            )}
+              )}
+            </div>
           </div>
+
         </form>
       </div>
 
