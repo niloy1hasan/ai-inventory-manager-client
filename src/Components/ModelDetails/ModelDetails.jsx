@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 export default function ModelDetails() {
   const model = useLoaderData();
+  const { createdBy } = model;
   const { user } = use(AuthContext);
   const [purchased, setPurchased] = useState(model?.purchased || 0);
   const [isSticky, setIsSticky] = useState(false);
@@ -14,6 +15,7 @@ export default function ModelDetails() {
   const navigate = useNavigate();
   const [isPurchased, setIsPurchased] = useState(false);
   const [loadingPurchase, setLoadingPurchase] = useState(false);
+  const [creatorInfo, setCreatorInfo] = useState([]);
 
   useEffect(() => {
   if (!user?.email || !model?._id) return;
@@ -25,6 +27,27 @@ export default function ModelDetails() {
       setIsPurchased(alreadyBought);
     });
 }, [user?.email, model?._id]);
+
+
+ useEffect(() => {
+    if (!createdBy) return;
+
+    const fetchCreator = async () => {
+      try {
+        const res = await fetch(
+          `https://ai-inventory-manager-server.vercel.app/users/${createdBy}`
+        );
+        const data = await res.json();
+        setCreatorInfo(data);
+      } catch (err) {
+        console.error("Failed to load creator info:", err);
+      }
+    };
+
+    fetchCreator();
+  }, [createdBy]);
+
+
 
 
 
@@ -111,7 +134,7 @@ export default function ModelDetails() {
             {!isSticky ? (
               <>
                 <img
-                  src={model.profilePic || user?.photoURL || "../../assets/default-user.png"}
+                  src={creatorInfo?.photoURL || "../../assets/default-user.png"}
                   alt="profile"
                   className="w-10 h-10 rounded-full border"
                 />
