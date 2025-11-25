@@ -33,7 +33,7 @@ const Register = () => {
       return;
     }
 
-    fetch(`http://localhost:3000/users/${email}`)
+    fetch(`https://ai-inventory-manager-server.vercel.app/users/${email}`)
       .then((res) => res.json())
       .then((data) => {
         if (data && Object.keys(data).length > 0) {

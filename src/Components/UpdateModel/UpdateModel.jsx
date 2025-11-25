@@ -59,7 +59,7 @@ const UpdateModel = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:3000/models/${loadedModel._id}`, {
+      const res = await fetch(`https://ai-inventory-manager-server.vercel.app/models/${loadedModel._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

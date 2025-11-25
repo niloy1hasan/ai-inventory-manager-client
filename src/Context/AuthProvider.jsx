@@ -10,7 +10,7 @@ const AuthProvider = ({children}) => {
     const [loading, setLoading] = useState(false);
 
     const addUserOnDb = (newUser) =>{
-        fetch('http://localhost:3000/users', {
+        fetch('https://ai-inventory-manager-server.vercel.app/users', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
