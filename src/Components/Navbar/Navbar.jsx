@@ -50,25 +50,54 @@ const Navbar = () => {
               tabIndex="-1"
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-4 shadow"
             >
-              <li><a>Home</a></li>
+              <li ><NavLink to={'/'}>Home</NavLink></li>
               <li><NavLink to={'/add-model'}>Add Model</NavLink></li>
-              <li><a>View Models</a></li>
+              <li><NavLink to={'/models'}>All Models</NavLink></li>
+              {
+              user && 
+                <>
+                <li><NavLink to={'/my-models'}>My Models</NavLink></li>
+                <li><NavLink to={'/purchased-models'}>Purchased Models</NavLink></li>
+                </>
+            }
             </ul>
           </div>
-          <a className="text-sm">AI Model Inventory Manager</a>
+          <NavLink to={'/'} className='select-none cursor-pointer'>
+            <h1 class="flex items-baseline font-semibold">
+              <span class="text-lg tracking-wide text-gray-800">
+              AI
+            </span>
+
+            <span class="text-[16px] text-gray-500">
+              Model
+            </span>
+
+            <span class="text-lg font-bold tracking-tight bg-clip-text text-transparent 
+              bg-gradient-to-r from-purple-600 to-blue-500">
+              Verse
+            </span>
+</h1>
+</NavLink>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
-            <li><NavLink to={'/'}>Home</NavLink></li>
-            <li><NavLink to={'/add-model'}>Add Model</NavLink></li>
-            <li><NavLink to={'/models'}>All Models</NavLink></li>
-            <li><a>My Models</a></li>
-            <li><a>Purchased Models</a></li>
+            <li className="font-medium"><NavLink to={'/'}>Home</NavLink></li>
+            <li className="font-medium"><NavLink to={'/add-model'}>Add Model</NavLink></li>
+            <li className="font-medium"><NavLink to={'/models'}>All Models</NavLink></li>
+            {
+              user && 
+                <>
+                <li className="font-medium"><NavLink to={'/my-models'}>My Models</NavLink></li>
+                <li className="font-medium"><NavLink to={'/purchased-models'}>Purchased Models</NavLink></li>
+                </>
+            }
           </ul>
         </div>
+
+
         <div className="navbar-end flex gap-3">
           <label className="swap swap-rotate">
-  {/* this hidden checkbox controls the state */}
+
   <input type="checkbox" className="theme-controller" value="synthwave" />
 
   {/* sun icon */}
@@ -120,8 +149,8 @@ const Navbar = () => {
             Profile
             </a>
         </li>
-        <li><a>Model Purchase</a></li>
-        <li><a>Models</a></li>
+        <li><NavLink to={'/purchased-models'}>Model Purchase</NavLink></li>
+        <li><NavLink to={'/models'}>Models</NavLink></li>
         <div className="h-px bg-zinc-200 my-0.5"></div>
         <li><a>Settings</a></li>
         <li><a onClick={()=>{logoutModal.current?.showModal()}}>Logout</a></li>
