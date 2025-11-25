@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { AuthContext } from "../../Context/AuthContext.";
 
 const UpdateModel = () => {
-  // const { user } = use(AuthContext);
+  const { user } = use(AuthContext);
   const navigate = useNavigate();
   const loadedModel = useLoaderData();
 
@@ -32,6 +32,20 @@ const UpdateModel = () => {
     }
   }, [loadedModel]);
 
+  useEffect(() => {
+  if (!user || !loadedModel) return;
+
+  if (user.email !== loadedModel.createdBy) {
+    toast.error("You are not allowed to edit this model.");
+    
+    setTimeout(() => {
+        navigate(-1);
+      }, 1200);
+  }
+}, [user, loadedModel, navigate]);
+
+  
+
   const handleChange = (e) => {
     const newForm = { ...formData, [e.target.name]: e.target.value };
     setFormData(newForm);
@@ -53,10 +67,20 @@ const UpdateModel = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
 
+    if (user.email !== loadedModel.createdBy) {
+    toast.error("You are not allowed to edit this model.");
+    setTimeout(() => {
+        navigate(-1);
+      }, 1200);
+    
+  }
+
     if (!isValid) {
       toast.error("Please fill all fields");
       return;
     }
+
+
 
     try {
       const res = await fetch(`https://ai-inventory-manager-server.vercel.app/models/${loadedModel._id}`, {

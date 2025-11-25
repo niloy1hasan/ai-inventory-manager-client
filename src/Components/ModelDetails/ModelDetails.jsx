@@ -186,11 +186,11 @@ export default function ModelDetails() {
             {isCreator && (
               <>
                 <NavLink to={`/update-model/${model._id}`}>
-                <button className="btn btn-sm btn-warning">
+                <button className="btn btn-sm btn-warning text-white">
                   Edit
                 </button>
                 </NavLink>
-                <button onClick={()=> deleteModal.current?.showModal()} className="btn btn-sm btn-error">
+                <button onClick={()=> deleteModal.current?.showModal()} className="btn btn-sm bg-red-600 hover:bg-red-700 text-white btn-error">
                   Delete
                 </button>
               </>
