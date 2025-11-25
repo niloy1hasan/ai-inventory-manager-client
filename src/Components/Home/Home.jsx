@@ -1,12 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Footer from "../Footer/Footer";
+import { NavLink } from "react-router";
+import ModelCard from "../ModelCard/ModelCard";
 
 const Home = () => {
+  const [models, setModels] = useState([]);
+
+  useEffect(() => {
+    const fetchModels = async () => {
+      try {
+        const res = await fetch(
+          "https://ai-inventory-manager-server.vercel.app/models"
+        );
+        const data = await res.json();
+        setModels(data.slice(0, 6));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchModels();
+  }, []);
+
   return (
     <>
 
@@ -20,61 +40,88 @@ const Home = () => {
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         className="h-full"
       >
-        {/* ====== Slide 1 ====== */}
         <SwiperSlide>
           <div className="flex flex-col justify-center items-center text-center h-full bg-gradient-to-r from-blue-800 to-blue-600 text-white px-6">
             <h1 className="text-5xl md:text-6xl font-extrabold mb-6">
-              Powering the Future with AI
+              Welcome to AI Model Verse
             </h1>
             <p className="max-w-2xl text-lg md:text-xl mb-8 text-blue-100">
-              Explore how artificial intelligence is transforming industries — from automation to innovation.
+              A smart platform to add, manage, and organize your AI models — all in one place.
             </p>
-            <button className="bg-white text-blue-800 font-semibold px-8 py-3 rounded-full text-lg hover:bg-blue-100 transition-all duration-300 shadow-lg">
+            <NavLink to={'/login'} className="bg-white text-blue-800 font-semibold px-8 py-3 rounded-full text-lg hover:bg-blue-100 transition-all duration-300 shadow-lg">
               Get Started
-            </button>
+            </NavLink>
           </div>
         </SwiperSlide>
 
-        {/* ====== Slide 2 ====== */}
         <SwiperSlide>
           <div className="flex flex-col justify-center items-center text-center h-full bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 text-white px-6">
             <h1 className="text-5xl md:text-6xl font-extrabold mb-6">
-              Smarter Systems, Brighter Tomorrow
+              Explore Models Across AI Model Verse
             </h1>
             <p className="max-w-2xl text-lg md:text-xl mb-8 text-blue-100">
-              AI models are reshaping technology, improving efficiency, and enabling groundbreaking solutions.
+              Browse models shared by the community and discover new frameworks, datasets, and use-cases.
             </p>
-            <button className="bg-white text-blue-800 font-semibold px-8 py-3 rounded-full text-lg hover:bg-blue-100 transition-all duration-300 shadow-lg">
-              Learn More
-            </button>
+            <NavLink to={'/models'} className="bg-white text-blue-800 font-semibold px-8 py-3 rounded-full text-lg hover:bg-blue-100 transition-all duration-300 shadow-lg">
+              Browse Models
+            </NavLink>
           </div>
         </SwiperSlide>
 
-        {/* ====== Slide 3 ====== */}
         <SwiperSlide>
           <div className="flex flex-col justify-center items-center text-center h-full bg-gradient-to-r from-blue-900 to-blue-700 text-white px-6">
             <h1 className="text-5xl md:text-6xl font-extrabold mb-6">
-              Empower Innovation with Machine Learning
+              Build Your Personal AI Model Collection
             </h1>
             <p className="max-w-2xl text-lg md:text-xl mb-8 text-blue-100">
-              Build smarter products and elevate experiences through intelligent automation and data insights.
+              Store and manage your AI models with metadata like framework, dataset, performance, and more.
             </p>
-            <button className="bg-white text-blue-800 font-semibold px-8 py-3 rounded-full text-lg hover:bg-blue-100 transition-all duration-300 shadow-lg">
-              Discover More
-            </button>
+            <NavLink to={'/add-model'} className="bg-white text-blue-800 font-semibold px-8 py-3 rounded-full text-lg hover:bg-blue-100 transition-all duration-300 shadow-lg">
+              Add Model
+            </NavLink>
           </div>
         </SwiperSlide>
       </Swiper>
 
-      {/* Decorative blur background circle */}
       <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-blue-300/30 rounded-full blur-3xl"></div>
       <div className="absolute -top-40 -right-40 w-[400px] h-[400px] bg-blue-400/20 rounded-full blur-3xl"></div>
     </section>
      
-     
+
+  <section className="max-w-6xl mx-auto px-6 py-12">
+
+      <div className="flex flex-col md:flex-row items-center justify-between mb-8">
+        <h2 className="text-3xl font-bold text-gray-800">Latest AI Models</h2>
+      </div>
+
+      {/* Models Grid */}
+      <div className="flex flex-col gap-3">
+        {models.length ? models.map((model) => (
+          <ModelCard key={model._id} model={model} />
+        )) : (
+          <div className="flex items-center justify-center h-[250px]">
+    <div className="relative">
+        <div className="h-24 w-24 rounded-full border-t-8 border-b-8 border-gray-200"></div>
+        <div className="absolute top-0 left-0 h-24 w-24 rounded-full border-t-8 border-b-8 border-blue-500 animate-spin">
+        </div>
+    </div>
+</div>
+        )}
+      </div>
+
+      {/* View More Button */}
+      <div className="mt-8 flex justify-center">
+        <NavLink
+          to="/models"
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-800 transition"
+        >
+          View More
+        </NavLink>
+      </div>
+    </section>     
      
     <section className="relative bg-white text-gray-800 py-20 px-6 md:px-16 overflow-hidden">
-      {/* Background accent shapes */}
+
       <div className="absolute top-0 left-0 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl animate-pulse"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-300/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
 
@@ -92,9 +139,8 @@ const Home = () => {
         </p>
 
         <div className="grid md:grid-cols-3 gap-8 text-left">
-          {/* Card 1 */}
-          <div className="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300">
-            <h3 className="text-2xl font-semibold text-blue-800 mb-3">
+          <div className="bg-gray-50 rounded-xl p-6 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-1000">
+            <h3 className="text-xl font-semibold text-blue-800 mb-3">
               Natural Language
             </h3>
             <p className="text-gray-700">
@@ -103,9 +149,8 @@ const Home = () => {
             </p>
           </div>
 
-          {/* Card 2 */}
-          <div className="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300">
-            <h3 className="text-2xl font-semibold text-blue-800 mb-3">
+          <div className="bg-gray-50 rounded-xl p-6 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-1000">
+            <h3 className="text-xl font-semibold text-blue-800 mb-3">
               Vision & Recognition
             </h3>
             <p className="text-gray-700">
@@ -114,9 +159,8 @@ const Home = () => {
             </p>
           </div>
 
-          {/* Card 3 */}
-          <div className="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300">
-            <h3 className="text-2xl font-semibold text-blue-800 mb-3">
+          <div className="bg-gray-50 rounded-xl p-6 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-1000">
+            <h3 className="text-xl font-semibold text-blue-800 mb-3">
               Decision Making
             </h3>
             <p className="text-gray-700">
@@ -125,9 +169,8 @@ const Home = () => {
             </p>
           </div>
 
-          {/* Card 4 */}
-          <div className="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300">
-            <h3 className="text-2xl font-semibold text-blue-800 mb-3">
+          <div className="bg-gray-50 rounded-xl p-6 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-1000">
+            <h3 className="text-xl font-semibold text-blue-800 mb-3">
               Speech Recognition
             </h3>
             <p className="text-gray-700">
@@ -136,9 +179,8 @@ const Home = () => {
             </p>
           </div>
 
-          {/* Card 5 */}
-          <div className="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300">
-            <h3 className="text-2xl font-semibold text-blue-800 mb-3">
+          <div className="bg-gray-50 rounded-xl p-6 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-1000">
+            <h3 className="text-xl font-semibold text-blue-800 mb-3">
               Predictive Analytics
             </h3>
             <p className="text-gray-700">
@@ -147,9 +189,8 @@ const Home = () => {
             </p>
           </div>
 
-          {/* Card 6 */}
-          <div className="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300">
-            <h3 className="text-2xl font-semibold text-blue-800 mb-3">
+          <div className="bg-gray-50 rounded-xl p-6 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-1000">
+            <h3 className="text-xl font-semibold text-blue-800 mb-3">
               Robotics & Automation
             </h3>
             <p className="text-gray-700">
@@ -166,8 +207,6 @@ const Home = () => {
         </div>
       </div>
     </section>
-
-
 
       <section className="my-10 mx-auto max-w-[1400px]">
         <div className="mx-auto max-w-[1400px] lg:w-11/12 sm:px-6 lg:px-8">
