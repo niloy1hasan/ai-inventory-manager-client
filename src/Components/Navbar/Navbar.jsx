@@ -1,12 +1,38 @@
-import React, { use, useRef } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { AuthContext } from "../../Context/AuthContext.";
 
 const Navbar = () => {
   const {user, setUser, logoutUser} = use(AuthContext);
+  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
 
-  console.log(user);
+
+  useEffect(() => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    setDarkMode(true);
+    document.documentElement.classList.add("dark");
+    document.documentElement.setAttribute("data-theme", "dark");
+  } else {
+    setDarkMode(false);
+    document.documentElement.classList.remove("dark");
+    document.documentElement.setAttribute("data-theme", "light");
+  }
+}, []);
+
+const handleToggle = () => {
+  if (darkMode) {
+    document.documentElement.classList.remove("dark");
+    document.documentElement.setAttribute("data-theme", "light");
+    localStorage.setItem("theme", "light");
+  } else {
+    document.documentElement.classList.add("dark");
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+  }
+  setDarkMode(!darkMode);
+};
 
   const logoutModal = useRef();
 
@@ -25,7 +51,7 @@ const Navbar = () => {
 
       return (
     <>
-      <nav className="bg-base-100 sticky z-50 top-0 shadow-sm">
+      <nav className="bg-base-100 dark:bg-gray-900 sticky z-50 top-0 shadow-sm">
         <div className="navbar max-w-[1800px] mx-auto lg:px-10">
         <div className="navbar-start">
           <div className="dropdown">
@@ -64,7 +90,7 @@ const Navbar = () => {
           </div>
           <NavLink to={'/'} className='select-none cursor-pointer'>
             <h1 class="flex items-baseline font-semibold">
-              <span class="text-lg tracking-wide text-gray-800">
+              <span class="text-lg tracking-wide dark:text-gray-100 text-gray-800">
               AI
             </span>
 
@@ -98,7 +124,7 @@ const Navbar = () => {
         <div className="pr-3 lg:pr-0 navbar-end flex gap-3">
 
         <label className="swap swap-rotate">
-              <input type="checkbox" className="theme-controller" value="synthwave" />
+              <input type="checkbox" className="theme-controller" checked={darkMode} onChange={handleToggle} value="synthwave" />
 
               {/* sun icon */}
               <svg
