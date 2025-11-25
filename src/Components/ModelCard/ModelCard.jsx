@@ -48,7 +48,7 @@ const ModelCard = ({ model }) => {
           <p className="text-sm text-gray-600 mt-2 line-clamp-3">{description}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm mt-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 pr-3 gap-x-4 gap-y-1 text-sm mt-3">
           <p>
             <span className="font-semibold text-gray-700">Framework:</span>{" "}
             {framework}

@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import ModelCard from "../ModelCard/ModelCard";
 import Footer from "../Footer/Footer";
 import { AuthContext } from "../../Context/AuthContext.";
+import PurchasedModelCard from "../PurchasedModelCard/PurchasedModelCard";
 
 const PurchasedModel = () => {
   const { user } = use(AuthContext);
@@ -39,7 +40,7 @@ const PurchasedModel = () => {
         <div className="mb-6">
           <h1 className="text-4xl font-bold mb-2">Purchased Models</h1>
           <p className="text-gray-600 max-w-2xl">
-            All AI models you have purchased and now have access to.
+            All the AI models I’ve purchased and can access.
           </p>
         </div>
 
@@ -65,8 +66,8 @@ const PurchasedModel = () => {
               have not purchased any models yet.
             </p>
           ) : (
-            models.map((model) => (
-              <ModelCard key={model._id} model={model} />
+            models.map((purchase) => (
+              <PurchasedModelCard key={purchase._id} purchase={purchase} />
             ))
           )}
         </div> }
