@@ -101,7 +101,7 @@ const Footer = () => {
             <a
   href="https://github.com/niloy1hasan/ai-inventory-manager-client"
   target="_blank"
-  className="pr-6 text-gray-400 hover:text-white transition"
+  className="lg:pr-6 text-gray-400 hover:text-white transition"
 >
   <svg
     xmlns="http://www.w3.org/2000/svg"
